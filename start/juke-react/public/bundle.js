@@ -91,8 +91,9 @@
 	      { path: '/', component: _AppContainer2.default },
 	      _react2.default.createElement(_reactRouter.IndexRoute, { component: _AlbumsContainer2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: '/albums', component: _AlbumsContainer2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'albums/:albumId', component: _AlbumContainer2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: '/artists', component: _ArtistsContainer2.default })
+	      _react2.default.createElement(_reactRouter.Route, { path: 'albums/:albumID', component: _AlbumContainer2.default }),
+	      _react2.default.createElement(_reactRouter.Route, { path: '/artists', component: _ArtistsContainer2.default }),
+	      _react2.default.createElement(_reactRouter.Route, { path: 'artists/:artistID', component: ArtistContainer })
 	    )
 	  )
 	), document.getElementById('app'));
@@ -30055,7 +30056,7 @@
 	//               case 'albums': return <AlbumsContainer />
 	//               case 'artists': return <ArtistsContainer />
 	//               case 'album': return <AlbumContainer />
-	//               case 'artist': return <ArtistContainer /> 
+	//               case 'artist': return <ArtistContainer />
 	//             }
 	//           })()
 	//         }
@@ -30118,43 +30119,32 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRouter = __webpack_require__(216);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (_ref) {
-	  var go = _ref.go;
 	  var location = _ref.location;
 	  return _react2.default.createElement(
 	    'sidebar',
 	    null,
 	    _react2.default.createElement('img', { src: 'juke.svg', className: 'logo' }),
 	    _react2.default.createElement(
-	      'section',
+	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'h4',
-	        { className: location.match('album') ? 'menu-item active' : 'menu-item' },
-	        _react2.default.createElement(
-	          'a',
-	          { href: '#', onClick: function onClick() {
-	              return go('albums');
-	            } },
-	          'ALBUMS'
-	        )
+	        _reactRouter.Link,
+	        { className: location.match('album') ? 'menu-item active' : 'menu-item', to: '/albums' },
+	        'Albums'
 	      )
 	    ),
 	    _react2.default.createElement(
-	      'section',
+	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'h4',
-	        { className: location.match('artist') ? 'menu-item active' : 'menu-item' },
-	        _react2.default.createElement(
-	          'a',
-	          { href: '#', onClick: function onClick() {
-	              return go('artists');
-	            } },
-	          'ARTISTS'
-	        )
+	        _reactRouter.Link,
+	        { className: location.match('artist') ? 'menu-item active' : 'menu-item', to: '/artists' },
+	        'Artists'
 	      )
 	    )
 	  );
@@ -30231,6 +30221,8 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRouter = __webpack_require__(216);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (_ref) {
@@ -30252,10 +30244,8 @@
 	          'div',
 	          { className: 'col-xs-4', key: album.id },
 	          _react2.default.createElement(
-	            'a',
-	            { className: 'thumbnail', href: '#', onClick: function onClick() {
-	                return go(album);
-	              } },
+	            _reactRouter.Link,
+	            { className: 'thumbnail', to: '/albums/' + album.id },
 	            _react2.default.createElement('img', { src: album.imageUrl }),
 	            _react2.default.createElement(
 	              'div',
@@ -30292,7 +30282,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.fetchAndGoToAlbum = exports.receiveAlbum = exports.receiveAlbums = undefined;
+	exports.fetchAndGoToAlbum = exports.fetchAlbum = exports.receiveAlbum = exports.receiveAlbums = undefined;
 	
 	var _constants = __webpack_require__(190);
 	
@@ -30309,6 +30299,16 @@
 	  return {
 	    type: _constants.RECEIVE_ALBUM,
 	    album: album
+	  };
+	};
+	
+	var fetchAlbum = exports.fetchAlbum = function fetchAlbum(albumID) {
+	  return function (dispatch) {
+	    return fetch('/api/albums/' + albumID).then(function (res) {
+	      return res.json();
+	    }).then(function (album) {
+	      dispatch(receiveAlbum(album));
+	    });
 	  };
 	};
 	
@@ -30330,7 +30330,7 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	
 	var _reactRedux = __webpack_require__(207);
@@ -30339,16 +30339,23 @@
 	
 	var _Album2 = _interopRequireDefault(_Album);
 	
+	var _albums = __webpack_require__(284);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var mapStateToProps = function mapStateToProps(_ref) {
-	  var selectedAlbum = _ref.selectedAlbum;
-	  return {
-	    selectedAlbum: selectedAlbum
-	  };
+	var mapStateToProps = function mapStateToProps(state) {
+	    return { selectedAlbum: state.selectedAlbum };
 	};
 	
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(_Album2.default);
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	    return {
+	        getTheAlbum: function getTheAlbum(albumID) {
+	            return dispatch((0, _albums.fetchAlbum)(albumID));
+	        }
+	    };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Album2.default);
 
 /***/ },
 /* 286 */
@@ -30360,6 +30367,8 @@
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -30370,24 +30379,79 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	  var selectedAlbum = _ref.selectedAlbum;
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'album' },
-	    _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'h3',
-	        null,
-	        selectedAlbum.name
-	      ),
-	      _react2.default.createElement('img', { src: selectedAlbum.imageUrl, className: 'img-thumbnail' })
-	    ),
-	    _react2.default.createElement(_SongsContainer2.default, { songs: selectedAlbum.songs })
-	  );
-	};
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Album = function (_React$Component) {
+	  _inherits(Album, _React$Component);
+	
+	  function Album() {
+	    _classCallCheck(this, Album);
+	
+	    return _possibleConstructorReturn(this, (Album.__proto__ || Object.getPrototypeOf(Album)).apply(this, arguments));
+	  }
+	
+	  _createClass(Album, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      console.log(this.props);
+	      console.log('mounted', this.props.params.albumID);
+	      this.props.getTheAlbum(this.props.params.albumID).then(function (res) {
+	        return res.json();
+	      }).then(function (results) {
+	        return console.log(results);
+	      });
+	      // const { onLoad } = this.props;
+	
+	      // Promise
+	      //   .all([
+	      //     fetch('/api/albums/:albumid').then(res => res.json()),
+	      //   ])
+	      //   .then(results => onLoad(...results));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var selectedAlbum = this.props.selectedAlbum;
+	
+	      console.log('render', selectedAlbum);
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'album' },
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement(
+	            'h3',
+	            null,
+	            selectedAlbum.name
+	          ),
+	          _react2.default.createElement('img', { src: selectedAlbum.imageUrl, className: 'img-thumbnail' })
+	        ),
+	        _react2.default.createElement(_SongsContainer2.default, { songs: selectedAlbum.songs })
+	      );
+	    }
+	  }]);
+	
+	  return Album;
+	}(_react2.default.Component);
+	
+	// export default ({ selectedAlbum }) => (
+	//   <div className="album">
+	//     <div>
+	//       <h3>{ selectedAlbum.name }</h3>
+	//       <img src={ selectedAlbum.imageUrl } className="img-thumbnail" />
+	//     </div>
+	//     <SongsContainer songs={selectedAlbum.songs} />
+	//   </div>
+	// );
+	
+	
+	exports.default = Album;
 
 /***/ },
 /* 287 */
@@ -30481,7 +30545,7 @@
 	    _react2.default.createElement(
 	      'tbody',
 	      null,
-	      songs.map(function (song) {
+	      songs && songs.map(function (song) {
 	        return _react2.default.createElement(
 	          'tr',
 	          { key: song.id },
@@ -30706,6 +30770,8 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRouter = __webpack_require__(216);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (_ref) {
@@ -30727,10 +30793,8 @@
 	          'div',
 	          { className: 'list-group-item', key: artist.id },
 	          _react2.default.createElement(
-	            'a',
-	            { href: '#', onClick: function onClick() {
-	                return go(artist);
-	              } },
+	            _reactRouter.Link,
+	            { className: 'thumbnail', to: '/albums/' + artist.id },
 	            artist.name
 	          )
 	        );

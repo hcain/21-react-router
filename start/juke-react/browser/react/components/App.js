@@ -16,7 +16,7 @@ export default class App extends Component {
 
   componentDidMount () {
     const { onLoad } = this.props;
-    
+
     Promise
       .all([
         fetch('/api/albums').then(res => res.json()),
@@ -32,8 +32,8 @@ export default class App extends Component {
           <SidebarContainer />
         </div>
       <div className="col-xs-10">
-        { 
-          this.props.children 
+        {
+          this.props.children
         }
         </div>
         <PlayerContainer />
@@ -52,7 +52,7 @@ export default class App extends Component {
 
   // componentDidMount () {
   //   const { onLoad } = this.props;
-    
+
   //   Promise
   //     .all([
   //       fetch('/api/albums').then(res => res.json()),
@@ -75,7 +75,7 @@ export default class App extends Component {
   //               case 'albums': return <AlbumsContainer />
   //               case 'artists': return <ArtistsContainer />
   //               case 'album': return <AlbumContainer />
-  //               case 'artist': return <ArtistContainer /> 
+  //               case 'artist': return <ArtistContainer />
   //             }
   //           })()
   //         }
