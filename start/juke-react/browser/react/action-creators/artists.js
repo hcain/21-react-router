@@ -16,17 +16,9 @@ export const receiveArtist = (artist, songs, albums) => ({
 });
 
 
-export const fetchArtist = artistID =>
-  dispatch =>
-    fetch(`/api/artists/${artistID}`)
-      .then(res => res.json())
-      .then(results => {
-        dispatch(receiveArtist(...results));
-      });
-
-export const fetchAndGoToArtist = artist =>
+export const fetchAndGoToArtist = artistID =>
   dispatch => {
-    let artistId = `/api/artists/${artist.id}`,
+    let artistId = `/api/artists/${artistID}`,
         songs = `${artistId}/songs`,
         albums = `${artistId}/albums`;
 
@@ -35,6 +27,5 @@ export const fetchAndGoToArtist = artist =>
       .then(responses => Promise.all(responses.map(res => res.json())))
       .then(results => {
         dispatch(receiveArtist(...results));
-        dispatch(switchLocation('artist'));
       });
   };

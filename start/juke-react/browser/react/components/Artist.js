@@ -10,13 +10,12 @@ export default class Artist extends React.Component {
     console.log(this.props)
     console.log('mounted', this.props.params.artistID)
     this.props.getTheArtist(this.props.params.artistID)
-    .then(res => res.json())
-    .then(results => console.log(results));
   }
 
   render(){
     const {selectedArtist} = this.props;
-    console.log(selectedArtist)
+    console.log('selected artist', selectedArtist)
+    console.log('selected artist albums', selectedArtist.albums)
 
     return(
       <div>
@@ -24,7 +23,7 @@ export default class Artist extends React.Component {
       <h3>Albums</h3>
       <div className="row">
         {
-          selectedArtist.albums.map(album => (
+          selectedArtist.albums && selectedArtist.albums.map(album => (
             <div className="col-xs-4" key={album.id}>
             <Link className="thumbnail" to={`/albums/${album.id}`}>
                 <img src={ album.imageUrl } />
@@ -44,3 +43,6 @@ export default class Artist extends React.Component {
     )
   }
 }
+
+
+

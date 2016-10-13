@@ -30778,11 +30778,10 @@
 	        return _react2.default.createElement(
 	          'div',
 	          { className: 'list-group-item', key: artist.id },
+	          '+          ',
 	          _react2.default.createElement(
-	            'a',
-	            { href: '#', onClick: function onClick() {
-	                return go(artist);
-	              } },
+	            _reactRouter.Link,
+	            { className: 'thumbnail', to: '/albums/' + artist.id },
 	            artist.name
 	          )
 	        );
@@ -30800,7 +30799,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.fetchAndGoToArtist = exports.fetchArtist = exports.receiveArtist = exports.receiveArtists = undefined;
+	exports.fetchAndGoToArtist = exports.receiveArtist = exports.receiveArtists = undefined;
 	
 	var _constants = __webpack_require__(190);
 	
@@ -30824,19 +30823,9 @@
 	  };
 	};
 	
-	var fetchArtist = exports.fetchArtist = function fetchArtist(artistID) {
+	var fetchAndGoToArtist = exports.fetchAndGoToArtist = function fetchAndGoToArtist(artistID) {
 	  return function (dispatch) {
-	    return fetch('/api/artists/' + artistID).then(function (res) {
-	      return res.json();
-	    }).then(function (results) {
-	      dispatch(receiveArtist.apply(undefined, _toConsumableArray(results)));
-	    });
-	  };
-	};
-	
-	var fetchAndGoToArtist = exports.fetchAndGoToArtist = function fetchAndGoToArtist(artist) {
-	  return function (dispatch) {
-	    var artistId = '/api/artists/' + artist.id,
+	    var artistId = '/api/artists/' + artistID,
 	        songs = artistId + '/songs',
 	        albums = artistId + '/albums';
 	
@@ -30846,7 +30835,6 @@
 	      }));
 	    }).then(function (results) {
 	      dispatch(receiveArtist.apply(undefined, _toConsumableArray(results)));
-	      dispatch((0, _location.switchLocation)('artist'));
 	    });
 	  };
 	};
@@ -30877,7 +30865,7 @@
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        getTheArtist: function getTheArtist(artistID) {
-	            return dispatch((0, _artists.fetchArtist)(artistID));
+	            return dispatch((0, _artists.fetchAndGoToArtist)(artistID));
 	        }
 	    };
 	};
@@ -30928,18 +30916,15 @@
 	    value: function componentDidMount() {
 	      console.log(this.props);
 	      console.log('mounted', this.props.params.artistID);
-	      this.props.getTheArtist(this.props.params.artistID).then(function (res) {
-	        return res.json();
-	      }).then(function (results) {
-	        return console.log(results);
-	      });
+	      this.props.getTheArtist(this.props.params.artistID);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var selectedArtist = this.props.selectedArtist;
 	
-	      console.log(selectedArtist);
+	      console.log('selected artist', selectedArtist);
+	      console.log('selected artist albums', selectedArtist.albums);
 	
 	      return _react2.default.createElement(
 	        'div',
@@ -30957,7 +30942,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'row' },
-	          selectedArtist.albums.map(function (album) {
+	          selectedArtist.albums && selectedArtist.albums.map(function (album) {
 	            return _react2.default.createElement(
 	              'div',
 	              { className: 'col-xs-4', key: album.id },
