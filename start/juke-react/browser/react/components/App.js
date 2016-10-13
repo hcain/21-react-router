@@ -10,8 +10,7 @@ import ArtistContainer from '../containers/ArtistContainer';
 import PlayerContainer from '../containers/PlayerContainer';
 
 export default class App extends Component {
-
-  constructor (props) {
+   constructor (props) {
     super(props);
   }
 
@@ -27,27 +26,60 @@ export default class App extends Component {
   }
 
   render () {
-    const { location } = this.props;
-
     return (
       <div id="main" className="container-fluid">
         <div className="col-xs-2">
           <SidebarContainer />
         </div>
-        <div className="col-xs-10">
-          {
-            (() => {
-              switch (location) {
-                case 'albums': return <AlbumsContainer />
-                case 'artists': return <ArtistsContainer />
-                case 'album': return <AlbumContainer />
-                case 'artist': return <ArtistContainer /> 
-              }
-            })()
-          }
+      <div className="col-xs-10">
+        { 
+          this.props.children 
+        }
         </div>
         <PlayerContainer />
       </div>
     );
   }
 }
+
+
+
+
+
+  // constructor (props) {
+  //   super(props);
+  // }
+
+  // componentDidMount () {
+  //   const { onLoad } = this.props;
+    
+  //   Promise
+  //     .all([
+  //       fetch('/api/albums').then(res => res.json()),
+  //       fetch('/api/artists').then(res => res.json())
+  //     ])
+  //     .then(results => onLoad(...results));
+  // }
+
+  // render () {
+    //const { location } = this.props;
+  //  <div id="main" className="container-fluid">
+  //     { this.props.children }
+  //       <div className="col-xs-2">
+  //         <SidebarContainer />
+  //       <div>
+  //       <div className="col-xs-10">
+  //         {
+  //           (() => {
+  //             switch (location) {
+  //               case 'albums': return <AlbumsContainer />
+  //               case 'artists': return <ArtistsContainer />
+  //               case 'album': return <AlbumContainer />
+  //               case 'artist': return <ArtistContainer /> 
+  //             }
+  //           })()
+  //         }
+  //       </div>
+  //       <PlayerContainer />
+  //     </div>
+  //   );
