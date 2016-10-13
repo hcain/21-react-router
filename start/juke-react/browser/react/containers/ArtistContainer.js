@@ -2,15 +2,15 @@
 
 import { connect } from 'react-redux';
 import Artist from '../components/Artist';
-import { fetchAndGoToAlbum } from '../action-creators/albums';
+import { fetchArtist } from '../action-creators/artists';
 
-const mapStateToProps = ({ selectedArtist }) => ({
-  selectedArtist
+const mapStateToProps = state => {
+    return {selectedArtist: state.selectedArtist}
+}
+const mapDispatchToProps = (dispatch) => ({
+    getTheArtist: artistID => dispatch(fetchArtist(artistID))
 });
 
-const mapDispatchToProps = dispatch => ({
-  go: album => dispatch(fetchAndGoToAlbum(album))
-});
 
 export default connect(
   mapStateToProps,

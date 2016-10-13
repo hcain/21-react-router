@@ -74,6 +74,10 @@
 	
 	var _ArtistsContainer2 = _interopRequireDefault(_ArtistsContainer);
 	
+	var _ArtistContainer = __webpack_require__(294);
+	
+	var _ArtistContainer2 = _interopRequireDefault(_ArtistContainer);
+	
 	var _AlbumContainer = __webpack_require__(285);
 	
 	var _AlbumContainer2 = _interopRequireDefault(_AlbumContainer);
@@ -93,7 +97,7 @@
 	      _react2.default.createElement(_reactRouter.Route, { path: '/albums', component: _AlbumsContainer2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'albums/:albumID', component: _AlbumContainer2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: '/artists', component: _ArtistsContainer2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'artists/:artistID', component: ArtistContainer })
+	      _react2.default.createElement(_reactRouter.Route, { path: 'artists/:artistID', component: _ArtistContainer2.default })
 	    )
 	  )
 	), document.getElementById('app'));
@@ -30404,13 +30408,6 @@
 	      }).then(function (results) {
 	        return console.log(results);
 	      });
-	      // const { onLoad } = this.props;
-	
-	      // Promise
-	      //   .all([
-	      //     fetch('/api/albums/:albumid').then(res => res.json()),
-	      //   ])
-	      //   .then(results => onLoad(...results));
 	    }
 	  }, {
 	    key: 'render',
@@ -30439,17 +30436,6 @@
 	
 	  return Album;
 	}(_react2.default.Component);
-	
-	// export default ({ selectedAlbum }) => (
-	//   <div className="album">
-	//     <div>
-	//       <h3>{ selectedAlbum.name }</h3>
-	//       <img src={ selectedAlbum.imageUrl } className="img-thumbnail" />
-	//     </div>
-	//     <SongsContainer songs={selectedAlbum.songs} />
-	//   </div>
-	// );
-	
 	
 	exports.default = Album;
 
@@ -30793,8 +30779,10 @@
 	          'div',
 	          { className: 'list-group-item', key: artist.id },
 	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { className: 'thumbnail', to: '/albums/' + artist.id },
+	            'a',
+	            { href: '#', onClick: function onClick() {
+	                return go(artist);
+	              } },
 	            artist.name
 	          )
 	        );
@@ -30812,7 +30800,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.fetchAndGoToArtist = exports.receiveArtist = exports.receiveArtists = undefined;
+	exports.fetchAndGoToArtist = exports.fetchArtist = exports.receiveArtist = exports.receiveArtists = undefined;
 	
 	var _constants = __webpack_require__(190);
 	
@@ -30833,6 +30821,16 @@
 	    artist: artist,
 	    songs: songs,
 	    albums: albums
+	  };
+	};
+	
+	var fetchArtist = exports.fetchArtist = function fetchArtist(artistID) {
+	  return function (dispatch) {
+	    return fetch('/api/artists/' + artistID).then(function (res) {
+	      return res.json();
+	    }).then(function (results) {
+	      dispatch(receiveArtist.apply(undefined, _toConsumableArray(results)));
+	    });
 	  };
 	};
 	
@@ -30860,7 +30858,7 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	
 	var _reactRedux = __webpack_require__(207);
@@ -30869,23 +30867,19 @@
 	
 	var _Artist2 = _interopRequireDefault(_Artist);
 	
-	var _albums = __webpack_require__(284);
+	var _artists = __webpack_require__(293);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var mapStateToProps = function mapStateToProps(_ref) {
-	  var selectedArtist = _ref.selectedArtist;
-	  return {
-	    selectedArtist: selectedArtist
-	  };
+	var mapStateToProps = function mapStateToProps(state) {
+	    return { selectedArtist: state.selectedArtist };
 	};
-	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	  return {
-	    go: function go(album) {
-	      return dispatch((0, _albums.fetchAndGoToAlbum)(album));
-	    }
-	  };
+	    return {
+	        getTheArtist: function getTheArtist(artistID) {
+	            return dispatch((0, _artists.fetchArtist)(artistID));
+	        }
+	    };
 	};
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Artist2.default);
@@ -30900,6 +30894,8 @@
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -30908,63 +30904,99 @@
 	
 	var _SongsContainer2 = _interopRequireDefault(_SongsContainer);
 	
+	var _reactRouter = __webpack_require__(216);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	  var selectedArtist = _ref.selectedArtist;
-	  var go = _ref.go;
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h3',
-	      null,
-	      selectedArtist.name
-	    ),
-	    _react2.default.createElement(
-	      'h3',
-	      null,
-	      'Albums'
-	    ),
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'row' },
-	      selectedArtist.albums.map(function (album) {
-	        return _react2.default.createElement(
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Artist = function (_React$Component) {
+	  _inherits(Artist, _React$Component);
+	
+	  function Artist() {
+	    _classCallCheck(this, Artist);
+	
+	    return _possibleConstructorReturn(this, (Artist.__proto__ || Object.getPrototypeOf(Artist)).apply(this, arguments));
+	  }
+	
+	  _createClass(Artist, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      console.log(this.props);
+	      console.log('mounted', this.props.params.artistID);
+	      this.props.getTheArtist(this.props.params.artistID).then(function (res) {
+	        return res.json();
+	      }).then(function (results) {
+	        return console.log(results);
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var selectedArtist = this.props.selectedArtist;
+	
+	      console.log(selectedArtist);
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          selectedArtist.name
+	        ),
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          'Albums'
+	        ),
+	        _react2.default.createElement(
 	          'div',
-	          { className: 'col-xs-4', key: album.id },
-	          _react2.default.createElement(
-	            'a',
-	            { className: 'thumbnail', href: '#', onClick: function onClick() {
-	                return go(album);
-	              } },
-	            _react2.default.createElement('img', { src: album.imageUrl }),
-	            _react2.default.createElement(
+	          { className: 'row' },
+	          selectedArtist.albums.map(function (album) {
+	            return _react2.default.createElement(
 	              'div',
-	              { className: 'caption' },
+	              { className: 'col-xs-4', key: album.id },
 	              _react2.default.createElement(
-	                'h5',
-	                null,
+	                _reactRouter.Link,
+	                { className: 'thumbnail', to: '/albums/' + album.id },
+	                _react2.default.createElement('img', { src: album.imageUrl }),
 	                _react2.default.createElement(
-	                  'span',
-	                  null,
-	                  album.name
+	                  'div',
+	                  { className: 'caption' },
+	                  _react2.default.createElement(
+	                    'h5',
+	                    null,
+	                    _react2.default.createElement(
+	                      'span',
+	                      null,
+	                      album.name
+	                    )
+	                  ),
+	                  _react2.default.createElement(
+	                    'small',
+	                    null,
+	                    album.songs.length,
+	                    ' songs'
+	                  )
 	                )
-	              ),
-	              _react2.default.createElement(
-	                'small',
-	                null,
-	                album.songs.length,
-	                ' songs'
 	              )
-	            )
-	          )
-	        );
-	      })
-	    ),
-	    _react2.default.createElement(_SongsContainer2.default, { songs: selectedArtist.songs })
-	  );
-	};
+	            );
+	          })
+	        ),
+	        _react2.default.createElement(_SongsContainer2.default, { songs: selectedArtist.songs })
+	      );
+	    }
+	  }]);
+	
+	  return Artist;
+	}(_react2.default.Component);
+	
+	exports.default = Artist;
 
 /***/ },
 /* 296 */

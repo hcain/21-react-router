@@ -11,7 +11,8 @@ export default ({ artists, go }) => (
       {
         artists.map(artist => (
           <div className="list-group-item" key={ artist.id }>
-            <Link className="thumbnail" to={`/albums/${artist.id}`}>{ artist.name }</Link>
+
+            <a href="#" onClick={() => go(artist)}>{ artist.name }</a>
           </div>
         ))
       }

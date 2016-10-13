@@ -11,13 +11,6 @@ export default class Album extends React.Component {
     this.props.getTheAlbum(this.props.params.albumID)
     .then(res => res.json())
     .then(results => console.log(results));
-    // const { onLoad } = this.props;
-
-    // Promise
-    //   .all([
-    //     fetch('/api/albums/:albumid').then(res => res.json()),
-    //   ])
-    //   .then(results => onLoad(...results));
   }
 
   render(){
@@ -35,14 +28,3 @@ export default class Album extends React.Component {
     )
   }
 }
-
-
-// export default ({ selectedAlbum }) => (
-//   <div className="album">
-//     <div>
-//       <h3>{ selectedAlbum.name }</h3>
-//       <img src={ selectedAlbum.imageUrl } className="img-thumbnail" />
-//     </div>
-//     <SongsContainer songs={selectedAlbum.songs} />
-//   </div>
-// );

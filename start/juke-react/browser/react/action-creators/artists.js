@@ -15,6 +15,15 @@ export const receiveArtist = (artist, songs, albums) => ({
   albums
 });
 
+
+export const fetchArtist = artistID =>
+  dispatch =>
+    fetch(`/api/artists/${artistID}`)
+      .then(res => res.json())
+      .then(results => {
+        dispatch(receiveArtist(...results));
+      });
+
 export const fetchAndGoToArtist = artist =>
   dispatch => {
     let artistId = `/api/artists/${artist.id}`,

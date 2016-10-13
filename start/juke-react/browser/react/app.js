@@ -8,6 +8,7 @@ import { Router, Route, hashHistory, IndexRoute, Link } from 'react-router';
 import AppContainer from './containers/AppContainer';
 import AlbumsContainer from './containers/AlbumsContainer';
 import ArtistsContainer from './containers/ArtistsContainer';
+import ArtistContainer from './containers/ArtistContainer';
 import AlbumContainer from './containers/AlbumContainer';
 
 ReactDOM.render(
@@ -19,7 +20,6 @@ ReactDOM.render(
         <Route path="albums/:albumID" component={AlbumContainer} />
         <Route path="/artists" component={ArtistsContainer} />
         <Route path="artists/:artistID" component={ArtistContainer} />
-
       </Route>
     </Router>
   </Provider>,
